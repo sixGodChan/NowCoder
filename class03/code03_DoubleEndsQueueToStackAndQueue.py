@@ -91,6 +91,11 @@ class MyStack():
     def pop(self):
         return self.stack.popFromHead()
 
+    def peek(self):
+        res = self.stack.popFromHead()
+        self.stack.addFromHead(res)
+        return res
+
     def isEmpty(self):
         return self.stack.isEmpty()
 
@@ -100,12 +105,16 @@ class MyQueue():
 
     def __init__(self):
         self.queue = DoubleEndsQueue()
+        self.size = 0
 
     def push(self, value):
+        self.size += 1
         self.queue.addFromHead(value)
 
     def poll(self):
+        self.size -= 1
         return self.queue.popFromTail()
+
 
     def isEmpty(self):
         return self.queue.isEmpty()
