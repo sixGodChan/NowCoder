@@ -80,7 +80,7 @@ class DoubleEndsQueue():
 
 
 class MyStack():
-    '''实现堆类'''
+    '''实现栈类'''
 
     def __init__(self):
         self.stack = DoubleEndsQueue()
