@@ -54,8 +54,8 @@ class unionFind():
         xHead = self.findFather(self.nodes[x])
         yHead = self.findFather(self.nodes[y])
         if xHead != yHead:
-            xSize = self.sizeMap[self.nodes[x]]
-            ySize = self.sizeMap[self.nodes[y]]
+            xSize = self.sizeMap[xHead]
+            ySize = self.sizeMap[yHead]
             big = xHead if xSize >= ySize else yHead
             small = yHead if big == xHead else xHead
             self.parents[small] = big
