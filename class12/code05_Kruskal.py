@@ -14,21 +14,32 @@
 
 使用并查集，会很简单
 '''
-from class12.code01_Graph import Graph, Edge
-import queue
+from class12.code01_Graph import Graph
+import heapq
+
+
+class Edge():
+    '''边的描述'''
+
+    def __init__(self, weight, fromNode, toNode):
+        self.weight = weight  # 权重
+        self.fromNode = fromNode
+        self.toNode = toNode
+
+    def __lt__(self, other):  # 比较器
+        return self.weight < other.weight
 
 
 def kruskalMST(graph):
     '''从小的边到大的边，依次弹出，小根堆！'''
     u = UnionFind([i for i in graph.nodes.values])
-    priorityQueue = queue.Queue()
-    lst = sorted(graph.egdes, key=lambda x: x.weight)  # 根据边权重排序
-    for edge in lst:  # M 条边
-        priorityQueue.put(edge)  # O(logM)
+    heap = []  # 小根堆
+    for edge in graph.egdes:  # M 条边
+        heapq.heappush(heap, edge)  # O(logM)
     result = set()
-    while not priorityQueue.empty():  # M 条边
-        edge = priorityQueue.get()
-        if not u.isSameSet(edge.fromNode, edge.toNode):  # O(logM)
+    while len(heap) != 0:  # M 条边
+        edge = heapq.heappop(heap)  # O(logM)
+        if not u.isSameSet(edge.fromNode, edge.toNode):  # # O(1)
             result.add(edge)
             u.union(edge.fromNode, edge.toNode)
     return result
@@ -78,8 +89,3 @@ class UnionFind():
             self.parents[small] = big
             self.sizeMap[big] = xSize + ySize
             del self.sizeMap[small]
-
-
-if __name__ == '__main__':
-    a = {1: 1, 2: 4, 3: 43}
-    print([i for i in a.values()])
