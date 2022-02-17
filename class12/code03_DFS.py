@@ -23,7 +23,7 @@ from class12.code01_Graph import Node
 
 
 def dfs(node):
-    '''从node出发，进行宽度优先遍历'''
+    '''从node出发，进行深度优先遍历'''
     if node == None:
         return
     stack = Stack()
