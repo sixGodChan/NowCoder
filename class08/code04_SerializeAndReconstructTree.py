@@ -6,8 +6,22 @@
 
 二叉树的序列化和反序列化
 
-1）可以用先序或者中序或者后序或者按层遍历，来实现二叉树的序列化
+1）可以用先序或者后序或者按层遍历，来实现二叉树的序列化
 2）用了什么方式序列化，就用什么方式反序列化
+
+ * 二叉树可以通过先序、后序或者按层遍历的方式序列化和反序列化，
+ * 以下代码全部实现了。
+ * 但是，二叉树无法通过中序遍历的方式实现序列化和反序列化
+ * 因为不同的两棵树，可能得到同样的中序序列，即便补了空位置也可能一样。
+ * 比如如下两棵树
+ *         __2
+ *        /
+ *       1
+ *       和
+ *       1__
+ *          \
+ *           2
+ * 补足空位置的中序遍历结果都是{ null, 1, null, 2, null}
 
 不可忽略空
 
@@ -27,18 +41,48 @@ class Node():
 
 def preSerial(head):
     '''先序 序列化'''
-    preList = queue.Queue()
-    pres(head, preList)
-    return preList
+    ans = queue.Queue()
+    pres(head, ans)
+    return ans
 
 
-def pres(head, preList):
+def pres(head, ans):
     if head == None:
-        preList.put(None)
+        ans.put(None)
     else:
-        preList.put(head.value)
-        pres(head.left, preList)
-        pres(head.right, preList)
+        ans.put(head.value)
+        pres(head.left, ans)
+        pres(head.right, ans)
+
+
+def inSerial(head):
+    ans = queue.Queue()
+    ins(head, ans)
+    return ans
+
+
+def ins(head, ans):
+    if head == None:
+        ans.put(None)
+    else:
+        ins(head.left, ans)
+        ans.put(head.value)
+        ins(head.right, ans)
+
+
+def posSerial(head):
+    ans = queue.Queue()
+    poss(head, ans)
+    return ans
+
+
+def poss(head, ans):
+    if head == None:
+        ans.put(None)
+    else:
+        poss(head.left, ans)
+        poss(head.right, ans)
+        ans.put(head.value)
 
 
 def buildByPreQueue(preList):
@@ -55,6 +99,28 @@ def preb(preList):
     head = Node(value)
     head.left = preb(preList)
     head.right = preb(preList)
+    return head
+
+
+def buildByPosQueue(posList):
+    '''后序 反序列化'''
+    if posList == None or posList.qsize() == 0:
+        return
+    from class13.code03_ReverseStackUsingRecursive import Stack
+    # 左右中 -> stack(中右左）
+    stack = Stack()
+    while not posList.empty():
+        stack.push(posList.get())
+    return posb(stack)
+
+
+def posb(posstack):
+    value = posstack.pop()
+    if value == None:
+        return None
+    head = Node(value)
+    head.right = posb(posstack)
+    head.left = posb(posstack)
     return head
 
 
@@ -139,15 +205,17 @@ def isSameValueStructure(head1, head2):
 '''
 二叉树
 
-如何设计一个打印整颗数的打印函数(对递归的练习)
+如何设计一个打印整颗树的打印函数(对递归的练习)
 
 先右头左的顺序
 '''
+
 
 def printTree(head):
     print('Binary Tree')
     printInOrder(head, 0, 'H', 17)
     print()
+
 
 def printInOrder(head, height, to, length):
     '''
@@ -179,10 +247,12 @@ if __name__ == '__main__':
     for i in range(testTimes):
         head = generateRandomBST(maxLevel, maxValue)
         pre = preSerial(head)
+        pos = posSerial(head)
         level = levelSerial(head)
         preBuild = buildByPreQueue(pre)
+        posBuild = buildByPosQueue(pos)
         levelBuild = buildByLevelQueue(level)
-        if not isSameValueStructure(preBuild, levelBuild):
+        if not isSameValueStructure(preBuild, posBuild) or not isSameValueStructure(posBuild, levelBuild):
             print('Oops!')
     print('finish!')
 
