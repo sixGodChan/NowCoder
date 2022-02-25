@@ -10,6 +10,8 @@
 4）动态规划是什么？好高端的样子哦...和尝试有什么关系？
 接下来->暴力递归到动态规划的套路！解决任何面试中的动态规划问题！
 
+======
+
 暴力递归到动态规划
 
 什么暴力递归可以继续优化？
@@ -44,8 +46,15 @@ def f(n):
 
 
 def ways1(N, M, K, P):
-    '''暴力递归'''
-    if N < 2 or M < 1 or M > N or K < 1 or K < N:
+    '''
+    暴力递归
+    :param N: N个位置
+    :param M: 开始位置M
+    :param K: 可以走K步
+    :param P: 结束位置P
+    :return: 返回方法数量
+    '''
+    if N < 2 or M < 1 or M > N or P < 1 or P > N or K < 1:
         return -1
     return work1(N, M, K, P)
 
@@ -64,13 +73,13 @@ def work1(N, cur, rest, P):
         return work1(N, cur + 1, rest - 1, P)
     if cur == N:  # 只能往右走
         return work1(N, cur - 1, rest - 1, P)
-    # 可以王左也可以往右走
+    # 可以往左也可以往右走
     return work1(N, cur + 1, rest - 1, P) + work1(N, cur - 1, rest - 1, P)
 
 
 def ways2(N, M, K, P):
-    '''最糙的动态规划 -> 计划搜索'''
-    if N < 2 or M < 1 or M > N or K < 1 or K < N:
+    '''最糙的动态规划 -> 记忆化搜索'''
+    if N < 2 or M < 1 or M > N or P < 1 or P > N or K < 1:
         return -1
     dp = [[-1 for _ in range(K + 1)] for _ in range(N + 1)]  # 二维表 [[-1, -1], [-1, -1], [-1, -1]]
     return work2(N, M, K, P, dp)
@@ -100,4 +109,34 @@ def work2(N, cur, rest, P, dp):
     dp[cur][rest] = work1(N, cur + 1, rest - 1, P) + work1(N, cur - 1, rest - 1, P)
     return dp[cur][rest]
 
+
 # 2:17:17
+
+def ways3(N, M, K, P):
+    '''动态规划 通过暴力递归+二维表改造，已不用考虑原题意'''
+    if N < 2 or M < 1 or M > N or P < 1 or P > N or K < 1:
+        return -1
+    dp = [[0 for _ in range(K + 1)] for _ in range(N + 1)]  # 二维表 [[0, 0], [0, 0], [0, 0]]
+    dp[P][0] = 1
+    for rest in range(1, K + 1):
+        for cur in range(1, N + 1):
+            if cur == 1:  # 第一行依赖左下位置
+                dp[cur][rest] = dp[cur + 1][rest - 1]
+            elif cur == N:  # 最后一行依赖左上位置
+                dp[cur][rest] = dp[cur - 1][rest - 1]
+            else:  # 中间行依赖左上+左下位置
+                dp[cur][rest] = dp[cur - 1][rest - 1] + dp[cur + 1][rest - 1]
+
+    # 打印二维表
+    # for i in range(len(dp)):
+    #     for j in range(len(dp[i])):
+    #         print(('%s' % dp[i][j]).rjust(3, ' '), end='')
+    #     print()
+
+    return dp[M][K]
+
+
+if __name__ == '__main__':
+    print(ways1(5, 2, 6, 4))
+    print(ways2(5, 2, 6, 4))
+    print(ways3(5, 2, 6, 4))

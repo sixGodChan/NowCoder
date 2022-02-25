@@ -62,6 +62,29 @@ def process2(w, v, i, rest):
     return max(p1, p2)
 
 
+def maxValue3(weights, values, bag):
+    '''动态规划'''
+    dp = [[0 for _ in range(bag + 1)] for _ in range(len(weights) + 1)]
+    for i in range(len(weights) - 1, -1, -1):
+        for rest in range(bag + 1):
+            p1 = dp[i + 1][rest]
+            p2 = -1
+            if rest - weights[i] >= 0:
+                p2 = values[i] + dp[i + 1][rest - weights[i]]
+            dp[i][rest] = max(p1, p2)
+    # 打印二维表
+    # for i in range(len(dp)):
+    #     for j in range(len(dp[i])):
+    #         print(('%s' % dp[i][j]).rjust(3, ' '), end='')
+    #     print()
+
+    return dp[0][bag]
+
+
 if __name__ == '__main__':
-    print(maxValue([1, 2, 3], [3, 2, 1], 3))
-    print(maxValue2([1, 2, 3], [3, 2, 1], 3))
+    weights = [3, 2, 4, 7, 3, 1, 7]
+    values = [5, 6, 3, 19, 12, 4, 2]
+    bag = 15
+    print(maxValue(weights, values, bag))
+    print(maxValue2(weights, values, bag))
+    print(maxValue3(weights, values, bag))

@@ -26,10 +26,10 @@ def process(s, i):
     i之前的位置，如何转化已经做过决定了，不用再关心
     i...有多少种转化的结果
     '''
+    # i有到终止位置
     if i == len(s):  # base case
         return 1
-    # i有到终止位置
-    if s[i] == '0':
+    if s[i] == '0':  # 之前的决定有问题
         return 0
     # i没有到终止位置
     # str[i]字符不是'0'
@@ -47,6 +47,23 @@ def process(s, i):
     # str[i] == '3' ~ '9'
     return process(s, i + 1)
 
+def convert3(s):
+    '''动态规划'''
+    if s == None and len(s) == 0:
+        return 0
+
+    n = len(s)
+    dp = [0 for _ in range(n + 1)]
+    dp[n] = 1
+    for i in range(n - 1, -1, -1):
+        if s[i] != '0':
+            res = dp[i + 1]
+            if i + 1 < n and s[i + 1] >= '0' and s[i + 1] <= '6':
+                res += dp[i + 2]
+            dp[i] = res
+    return dp[0]
+
 
 if __name__ == '__main__':
-    print(convert('111'))
+    print(convert('11111'))
+    print(convert3('11111'))
